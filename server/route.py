@@ -1,15 +1,19 @@
-from app import app,db,bcrypt,login_manager
+from app import app,db,bcrypt,login_manager, socketio
 from flask import render_template, request, redirect, session
 from models import User
 from flask_login import login_user, login_required, logout_user, current_user
+from flask_socketio import SocketIO, send, emit
 
 @app.route('/')
 def hello_world():
     #return render_template('index.html', logged_in=True, user=username)
     if not current_user.is_authenticated:
         return redirect('/signup')
-    else:
-        return('hey bud, you are logged in, youre pretty cool' )
+
+    #user = session.get('username')
+    print(current_user.username)
+    return render_template('home.html')
+
 @login_manager.user_loader
 def load_user(user_id):
     lol = User.query.filter_by(id=user_id).first()
@@ -45,6 +49,7 @@ def verify_login():
 
     if user is not None and bcrypt.check_password_hash(user.password, testPassword):
         login_user(user)
+        #session['username'] = username
         return redirect("/")
     else:
         return render_template("signup.html", logged_in=False)
@@ -54,3 +59,12 @@ def verify_login():
 def logout():
     logout_user()
     return redirect("/")
+
+@socketio.on('message')
+def handleMessage(msg):
+    print('Message: ' + msg)
+    send(msg, broadcast=True)
+    
+@socketio.on('connect')
+def test_connect():
+    send('my response', broadcast=True)
