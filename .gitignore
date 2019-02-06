@@ -1,0 +1,4 @@
+/server/venv
+/server/.vscode
+/server/__pycache__
+/server/todo.txt
