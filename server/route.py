@@ -16,8 +16,7 @@ def hello_world():
 
 @login_manager.user_loader
 def load_user(user_id):
-    lol = User.query.filter_by(id=user_id).first()
-    return lol
+    return User.query.filter_by(id=user_id).first()
 
 @app.route('/signup')
 def signup_page():
@@ -48,7 +47,7 @@ def verify_login():
     user = User.query.filter_by(username=username).first()
 
     if user is not None and bcrypt.check_password_hash(user.password, testPassword):
-        login_user(user)
+        login_user(user, force=True)
         #session['username'] = username
         return redirect("/")
     else:
@@ -57,6 +56,7 @@ def verify_login():
 @app.route('/logout')
 @login_required
 def logout():
+    print(current_user.username)
     logout_user()
     return redirect("/")
 
@@ -67,4 +67,4 @@ def handleMessage(msg):
     
 @socketio.on('connect')
 def test_connect():
-    send('my response', broadcast=True)
+    send('User has connected', broadcast=True)
