@@ -27,5 +27,14 @@ $(document).ready(function() {
 <ul id="messages"></ul>
 <input type="text" id="myMessage">
 <button id="sendbutton">Send</button>
+
+<form method="POST" action="/addfriend">
+	<div class="pb-3">
+		<br>
+		<input type="text" placeholder="friend_to_add" name="friend_to_add" id="friend_to_add"></input>
+		<br>
+	</div>
+	<button type="submit" placeholder="add" id="lookup">Add</button>
+</form>
 </body>
 </html>

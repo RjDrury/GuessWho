@@ -4,6 +4,7 @@ from models import *
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO, send, emit
 from controller.UserController import login_user_controller,register_and_login_user_controller
+from controller.RelationshipController import add_friend_controller, get_friends_list
 @app.route('/')
 def hello_world():
     #return render_template('index.html', logged_in=True, user=username)
@@ -11,6 +12,7 @@ def hello_world():
         return redirect('/signup')
 
     #user = session.get('username')
+    get_friends_list(current_user)
     return render_template('home.html')
 
 @login_manager.user_loader
@@ -55,6 +57,14 @@ def verify_login():
 def logout():
     print(current_user.username)
     logout_user()
+    return redirect("/")
+
+@app.route('/addfriend', methods=['POST'])
+@login_required
+def add_friend():
+    this_username = current_user.username
+    friend_to_add = request.form.get('friend_to_add')
+    print(add_friend_controller(this_username,friend_to_add))
     return redirect("/")
 
 @socketio.on('message')

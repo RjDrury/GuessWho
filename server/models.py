@@ -25,7 +25,7 @@ class UserRelationships(db.Model):
     id_2 = db.Column(db.Integer)
     relationship = db.Column(db.String(30), nullable = False)
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<UserRelationships %r>' % self.id_1
 
     def __init__(self, id_1,id_2, relationship):
         self.id_1 = id_1
