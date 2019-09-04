@@ -1,16 +1,18 @@
 from app import db
-from flask_login import UserMixin # does the db methods for you expected by flask login
+# does the db methods for you expected by flask login
+from flask_login import UserMixin
+
 
 class User(UserMixin, db.Model):
     """ User accounts """
-    
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    
-    facebook_apikey= db.Column(db.String(128))
-    
+
+    facebook_apikey = db.Column(db.String(128))
+
     def __repr__(self):
         return '<User %r>' % self.username
 
@@ -18,16 +20,19 @@ class User(UserMixin, db.Model):
         self.username = username
         self.email = email
         self.password = password
+
+
 class UserRelationships(db.Model):
     'table defining user relationships, id_1 must be < id_2'
-
-    id_1 = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    id_1 = db.Column(db.Integer)
     id_2 = db.Column(db.Integer)
-    relationship = db.Column(db.String(30), nullable = False)
+    relationship = db.Column(db.String(30), nullable=False)
+
     def __repr__(self):
         return '<UserRelationships %r>' % self.id_1
 
-    def __init__(self, id_1,id_2, relationship):
+    def __init__(self, id_1, id_2, relationship):
         self.id_1 = id_1
         self.id_2 = id_2
         self.relationship = relationship
