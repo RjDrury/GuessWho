@@ -2,11 +2,11 @@ from app import app, db, bcrypt, login_manager, socketio
 from flask import render_template, request, redirect, session
 from models import *
 from flask_login import login_user, login_required, logout_user, current_user
-from flask_socketio import SocketIO, send, emit
+from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from controller.UserController import login_user_controller, register_and_login_user_controller
 from controller.RelationshipController import add_friend_controller, get_relationship_list
 @app.route('/')
-def hello_world():
+def home_page():
     # return render_template('index.html', logged_in=True, user=username)
     if not current_user.is_authenticated:
         return redirect('/signup')
@@ -83,3 +83,19 @@ def handleMessage(msg):
 @socketio.on('connect')
 def test_connect():
     send('User has connected', broadcast=True)
+
+
+# @socketio.on('join')
+# def on_join(data):
+#     username = data['username']
+#     room = data['room']
+#     join_room(room)
+#     send(username + ' has entered the room.', room=room)
+
+
+@socketio.on('leave')
+def on_leave(data):
+    username = data['username']
+    room = data['room']
+    leave_room(room)
+    send(username + ' has left the room.', room=room)
