@@ -5,6 +5,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from controller.UserController import login_user_controller, register_and_login_user_controller
 from controller.RelationshipController import add_friend_controller, get_relationship_list
+from controller.RoomController import *
 @app.route('/')
 def home_page():
     # return render_template('index.html', logged_in=True, user=username)
@@ -44,10 +45,8 @@ def sign_up():
 # Login to server
 @app.route('/login', methods=['POST'])
 def verify_login():
-    username = request.form.get('username')
-    testPassword = request.form.get('password')
-
-    error_login_message, user = login_user_controller(username, testPassword)
+    error_login_message, user = login_user_controller(
+        request.form.get('username'), request.form.get('password'))
 
     if user is not None:
         login_user(user)
@@ -74,28 +73,36 @@ def add_friend():
     return redirect("/")
 
 
+@app.route('/createroom', methods=['get'])
+def create_room():
+    room_id = room_creations()
+    return render_template('home.html', room_id=room_id)
+
+
+@app.route('/joinroom', methods=['POST'])
+def join_game_room():
+    room_id = request.form.get('room_id')
+    room_info = get_room_info_and_join(room_id, current_user.username)
+
+    if room_info != "error":
+       # join_room(room_id)
+        return render_template("game.html")
+    else:
+        return redirect("/")
+
+
 @socketio.on('message')
 def handleMessage(msg):
     print('Message: ' + msg)
     send(msg, broadcast=True)
 
 
+# @socketio.on('message')
+# def handleMessage(msg):
+#     print('Message: ')
+#     send(msg, broadcast=False, room=1111)
+
+
 @socketio.on('connect')
 def test_connect():
     send('User has connected', broadcast=True)
-
-
-# @socketio.on('join')
-# def on_join(data):
-#     username = data['username']
-#     room = data['room']
-#     join_room(room)
-#     send(username + ' has entered the room.', room=room)
-
-
-@socketio.on('leave')
-def on_leave(data):
-    username = data['username']
-    room = data['room']
-    leave_room(room)
-    send(username + ' has left the room.', room=room)
