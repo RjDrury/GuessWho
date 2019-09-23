@@ -83,12 +83,21 @@ def create_room():
 def join_game_room():
     room_id = request.form.get('room_id')
     room_info = get_room_info_and_join(room_id, current_user.username)
-
+    print(room_info)
     if room_info != "error":
        # join_room(room_id)
-        return render_template("game.html")
+        return render_template("game.html", room_id=room_id)
     else:
         return redirect("/")
+
+
+@app.route('/guess', methods=['POST'])
+def guess_the_answer():
+    guess = request.form.get('guess')
+    room_id = request.form.get('roomid')
+    win = guess_answer(room_id, guess, current_user.username)
+
+    return render_template("game.html", room_id=room_id, status=win)
 
 
 @socketio.on('message')

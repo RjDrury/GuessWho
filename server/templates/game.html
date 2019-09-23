@@ -30,7 +30,16 @@
     <ul id="messages"></ul>
     <input type="text" id="myMessage">
     <button id="sendbutton">Send</button>
+    <form method="POST" action="/guess">
+        <div class="pb-3">
+            <br>
+            <input type="text" placeholder="Guess" name="guess" id="guess"></input>
+            <br>
+            <input type="text" placeholder="{{room_id}}" id="roomid" />
 
+        </div>
+        <button type="submit" placeholder="Guess" id="lookup">Guess</button>
+    </form>
 
 
 </body>
